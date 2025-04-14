@@ -21,8 +21,8 @@
             <img src="/images/clear.png" class="weather-icon">
             <!-- temperature -->
             <h1 class="temp">27°c</h1>
-            <!-- city -->
-            <h2 class="city">Kuala Lumpur</h2>
+            <!-- location -->
+            <h2 class="location">Kelantan</h2>
             <div class="details">
                 <div class="col">
                     <img src="/images/humidity.png">
@@ -42,6 +42,31 @@
             </div>
         </div>
     </div>
+
+<!-- adding weather api-->
+<script>
+    const apiKey = "f7e2605d9afee9e5e2d15d88f917bbb4";
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+
+    async function checkWeather(location){
+        const response = await fetch(apiUrl + location + `&appid=${apiKey}`);
+        var data = await response.json();
+
+        console.log(data);
+
+        document.querySelector(".location").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) +"°c";
+        document.querySelector(".humidity").innerHTML = data.main.humidity +"%";
+        document.querySelector(".wind").innerHTML = data.wind.speed +" km/h";
+    }
+    searchBtn.addEventListener("click", () =>{
+        checkWeather(searchBox.value);
+    })
+</script>
+
 </body>
 
 </html>
