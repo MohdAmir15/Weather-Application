@@ -16,6 +16,9 @@
             <!-- search button -->
             <button><img src="images/search.png"></button>
         </div>
+        <div class="error">
+            <p>Invalid location!</p>
+        </div>
         <!-- weather details -->
         <div class="weather">
             <img src="/images/clear.png" class="weather-icon">
@@ -45,23 +48,49 @@
 
 <!-- adding weather api-->
 <script>
+    //using api to fetch the weather data
     const apiKey = "f7e2605d9afee9e5e2d15d88f917bbb4";
     const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
+    //declaring other var
     const searchBox = document.querySelector(".search input");
     const searchBtn = document.querySelector(".search button");
+    const weatherIcon = document.querySelector(".weather-icon");
 
+    //check weather function to fecth the info
     async function checkWeather(location){
         const response = await fetch(apiUrl + location + `&appid=${apiKey}`);
-        var data = await response.json();
+        //error handler
+        if(response.status == 404){
+            document.querySelector(".error").style.display = "block";
+            document.querySelector(".weather").style.display = "none";
+        }else{
+            var data = await response.json();
 
-        console.log(data);
+            //info to be displayed
+            document.querySelector(".location").innerHTML = data.name;
+            document.querySelector(".temp").innerHTML = Math.round(data.main.temp) +"°c";
+            document.querySelector(".humidity").innerHTML = data.main.humidity +"%";
+            document.querySelector(".wind").innerHTML = data.wind.speed +" km/h";
 
-        document.querySelector(".location").innerHTML = data.name;
-        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) +"°c";
-        document.querySelector(".humidity").innerHTML = data.main.humidity +"%";
-        document.querySelector(".wind").innerHTML = data.wind.speed +" km/h";
+            //updating the weather icons dislayed
+            if(data.weather[0].main == "Clouds"){
+                weatherIcon.src = "images/clouds.png"
+            }else if(data.weather[0].main == "Clear"){
+                weatherIcon.src = "images/clear.png"
+            }else if(data.weather[0].main == "Rain"){
+                weatherIcon.src = "images/rain.png"
+            }else if(data.weather[0].main == "Drizzle"){
+                weatherIcon.src = "images/drizzle.png"
+            }else if(data.weather[0].main == "Mist"){
+                weatherIcon.src = "images/mist.png"
+            }
+            //to display the info even the style.css display is none
+            document.querySelector(".weather").style.display = "block";
+            document.querySelector(".error").style.display = "none";
+        }
     }
+    //search button function
     searchBtn.addEventListener("click", () =>{
         checkWeather(searchBox.value);
     })
